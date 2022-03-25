@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 export interface TodoItem {
   readonly label: string;
@@ -13,15 +14,29 @@ export interface TodoList {
 }
 
 let idItem = 0;
+const savedListName  = 'TODOLIST MIAGE';
+const defaultList : TodoList = {label: 'L3 MIAGE', items:[]};
 
 @Injectable({
   providedIn: 'root'
 })
-export class TodolistService {
-  private subj = new BehaviorSubject<TodoList>({label: 'L3 MIAGE', items: [] });
+export class TodolistService  implements OnDestroy{
+
+  private abo!: Subscription
+  private subj = new BehaviorSubject<TodoList>(
+    localStorage.getItem(savedListName) ? JSON.parse(localStorage.getItem(savedListName)!): defaultList
+  );
+
   readonly observable = this.subj.asObservable();
 
-  constructor() {
+
+  constructor()  {
+    this.abo = this.observable.subscribe(L => localStorage.setItem(savedListName,JSON.stringify(L)))
+  }
+
+
+  ngOnDestroy(){
+    this.abo.unsubscribe();
   }
 
   create(...labels: readonly string[]): this {
@@ -59,5 +74,7 @@ export class TodolistService {
     }
     return this;
   }
+
+
 
 }

@@ -1,2 +1,32 @@
-<h1>TP TodoList</h1>
+<app-todo-list></app-todo-list>
 
+
+
+<section *ngIf="obsList | async as L">
+
+  <form (submit)="ajouter(lab.value); lab.value=''" #ngForm = "ngForm">
+    Tache : <input type="text"  name="lab" #lab placeholder="what needs to be done?">
+  </form>
+
+ <ul>
+   <li *ngFor="let item of L.items; trackby:trackById">
+
+    <input type="checkbox"
+           [ngModel]="item.isDone"
+          (ngModelChange)="update({isDone: $event},item)">
+
+    <input type="text"
+
+        [ngModel]="item.label"
+        (ngModelChange)="update({label: $event},item)">
+
+    <button (click)="delete(item)">Supprimer</button>
+   </li>
+ </ul>
+
+
+</section>
+
+<pre>
+  {{ obsList | async | json }}
+</pre>
