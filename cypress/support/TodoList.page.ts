@@ -23,12 +23,19 @@ class PageTDL_C implements PageTDL {
   }
 
   addNewItem(todo : string){
-    cy.get('.new-todo').type(todo);
-    cy.get('.new-todo').type('{enter}');
+    cy.get('.new-todo').type(`${todo}{enter}`);
     return this
   }
 
+textLItodoItemshouldbepresente(chaine:string):this{
+   cy.get('li > app-todo-item').should("have.text",chaine);
+   return this
+}
 
+todoitemRestante(value:number):this{
+  cy.get('footer span.todo-count strong').should("have.text",value)
+  return this;
+}
 
 
 

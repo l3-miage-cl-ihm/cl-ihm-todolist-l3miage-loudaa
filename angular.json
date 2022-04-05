@@ -137,6 +137,16 @@
               "devServerTarget": "l3m-tpX-todolist-angular-y2022:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "l3m-tpX-todolist-angular-y2022:build:production",
+            "firebaseProject": "mytodolist-9928c",
+            "firebaseHostingSite": "mytodolist-9928c"
+          }
         }
       }
     }

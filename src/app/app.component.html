@@ -1,5 +1,7 @@
+<app-authentification></app-authentification>
+<hr/>
 <app-todo-list></app-todo-list>
-
+<hr/>
 
 
 <section *ngIf="obsList | async as L">
@@ -23,10 +25,10 @@
     <button (click)="delete(item)">Supprimer</button>
    </li>
  </ul>
-
-
 </section>
 
 <pre>
   {{ obsList | async | json }}
 </pre>
+
+
