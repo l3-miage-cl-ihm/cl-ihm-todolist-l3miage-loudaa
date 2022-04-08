@@ -1,3 +1,12 @@
+
+Fonctionalité implémenté : 
+          1) le service d'authentification 
+          2) le service de cloud firestore
+          
+
+Bugs rencontere : c'est on n'arrivait pas à récupérer nos données à partir de la base de donné de firestore car il y avait pas de  synchronisation entre l'observable au moment de l'authentification on n a eu beaucoup de temps à comprendre l'erreur  donc on n'a pas eu le temps de faire les autres fonctionalités  
+
+
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-f059dc9a6f8d3a56e377f745f24479a46679e63a5d9fe6f495e02850cd0d8118.svg)](https://classroom.github.com/online_ide?assignment_repo_id=6990072&assignment_repo_type=AssignmentRepo)
 # L3mTpXTodolistAngularY2022
 
