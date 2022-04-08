@@ -18,7 +18,6 @@ export class TodolistFirestoreServiceService {
 
   constructor(private afs :AngularFirestore , private afa : AngularFireAuth) {
   //  this.observable = combineLatest([
-      afa.authState,
       afa.authState.pipe(
         switchMap( U => {
           if(U){

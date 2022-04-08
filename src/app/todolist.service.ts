@@ -1,9 +1,8 @@
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {AngularFirestore}  from '@angular/fire/compat/firestore'
 
-import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, map, Subscription } from 'rxjs';
-import { user } from '@angular/fire/auth';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, map, Observable, observable, Subscription } from 'rxjs';
 
 export interface TodoItem {
   readonly label: string;
@@ -19,69 +18,73 @@ export interface TodoList {
 
 let idItem = 0;
 const savedListName  = 'TODOLIST MIAGE';
-const defaultList : TodoList = {label: 'L3 MIAGE', items:[]};
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class TodolistService  implements OnDestroy{
+export class TodolistService  implements OnInit{
 
-  private abo!: Subscription
-  private subj = new BehaviorSubject<TodoList>(
-    localStorage.getItem(savedListName) ? JSON.parse(localStorage.getItem(savedListName)!): defaultList
-  );
-  readonly observable = this.subj.asObservable();
-  items  = this.subj.asObservable();
-  id=""
+ // private abo!: Subscription
+  //private subj = new BehaviorSubject<TodoList>(
+  //       {label : 'default', items : []}
+//);
+//  readonly observable = this.subj.asObservable();
+  items !: Observable<TodoList>;
+  todolist : TodoList = {label: 'L3 MIAGE', items:[]};
+  id='';
   constructor(private afs: AngularFirestore, private auth:AngularFireAuth) {
     // this.abo = this.observable.subscribe(L => localStorage.setItem(savedListName,JSON.stringify(L)))
     this.auth.onAuthStateChanged(
       (user) => {
+        console.log(user?.uid);
         if(user){
           this.id = user.uid;
           this.items = this.afs.doc<TodoList>(`/${this.id}/default`).valueChanges().pipe(
-            map(L => L ?? {label : 'default', items : []}));
+            map(L => this.todolist = L ?? {label : 'default', items : []}));
+            console.log(this.items);
         }
       }
     )
   }
-
-
-  ngOnDestroy(){
-    this.abo.unsubscribe();
+  ngOnInit(): void {
   }
 
+  get obsItems(){
+    return this.items;
+  }
+
+  
+
   create(...labels: readonly string[]): this {
-    const L: TodoList = this.subj.value;
-    this.subj.next( {
-      ...L,
+    this.afs.doc<TodoList>(`/${this.id}/default`).set({
+      ...this.todolist,
       items: [
-        ...L.items,
+        ...this.todolist.items,
         ...labels.filter( l => l !== '').map(
             label => ({label, isDone: false, id: idItem++})
           )
       ]
-    } );
+    })
     return this;
   }
 
   delete(...items: readonly TodoItem[]): this {
-    const L = this.subj.value;
-    this.subj.next( {
-      ...L,
-      items: L.items.filter(item => items.indexOf(item) === -1 )
-    } );
+    const L = {
+      ...this.todolist,
+      items: this.todolist.items.filter(item => items.indexOf(item) === -1 )
+    } ;
+    this.afs.doc<TodoList>(`/${this.id}/default`).update(
+      L)
     return this;
   }
 
   update(data: Partial<TodoItem>, ...items: readonly TodoItem[]): this {
     if(data.label !== "") {
-      const L = this.subj.value;
-      this.subj.next( {
-        ...L,
-        items: L.items.map( item => items.indexOf(item) >= 0 ? {...item, ...data} : item )
-      } );
+      this.afs.doc<TodoList>(`/${this.id}/default`).update({
+        ...this.todolist,
+        items: this.todolist.items.map( item => items.indexOf(item) >= 0 ? {...item, ...data} : item )
+      } )
     } else {
       this.delete(...items);
     }

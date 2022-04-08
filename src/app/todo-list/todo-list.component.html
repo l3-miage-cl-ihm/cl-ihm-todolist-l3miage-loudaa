@@ -1,3 +1,7 @@
+
+
+<section *ngIf="auth.user | async as user ">
+  {{ user.displayName }}
 <section class="todoapp" *ngIf="tdlobs | async as TDL ">
   <header class="header">
     <h1> {{TDL.label}} </h1>
@@ -17,7 +21,7 @@
     (click)="updateAllDone(!TDL.allDone, TDL.items)"
     >Mark all as complete</label>
     <ul class="todo-list">
-      <li *ngFor="let item of TDL.displayedItems" [class.editing]="ctdi.editing">
+      <li *ngFor="let item of TDL.displayedItems" [class.editing]="ctdi.editing" [class.completed]="item.isDone">
         <app-todo-item #ctdi [data]="item"
                              (update)="update($event,item)"
                              (remove)="delete($event)">
@@ -47,6 +51,7 @@
         (click)="setfilter(filterCompleted)">Complétés</a>
       </li>
     </ul>
-    <button class="clear-completed" >Supprimer cochées</button>
+    <button class="clear-completed"  (click)="deleteAll(TDL.items)" >Supprimer cochées</button>
   </footer>
+</section>
 </section>

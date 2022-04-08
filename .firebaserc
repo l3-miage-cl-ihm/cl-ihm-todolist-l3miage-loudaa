@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "mytodolist-9928c"
+  },
+  "targets": {
+    "mytodolist-9928c": {
+      "hosting": {
+        "l3m-tpX-todolist-angular-y2022": [
+          "mytodolist-9928c"
+        ]
+      }
+    }
   }
 }

@@ -21,16 +21,18 @@ import { provideStorage,getStorage } from '@angular/fire/storage';
     AppComponent,
     TodoListComponent,
     TodoItemComponent,
-    AuthentificationComponent
+    AuthentificationComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    
     AngularFireModule.initializeApp(environment.firebase),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    provideStorage(() => getStorage())
+    provideStorage(() => getStorage()),
+
   ],
   providers: [],
   bootstrap: [AppComponent]

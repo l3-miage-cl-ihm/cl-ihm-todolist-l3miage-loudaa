@@ -1,6 +1,7 @@
 import { Observable, BehaviorSubject, filter, combineLatest, map } from 'rxjs';
 import { TodoItem, TodoList, TodolistService } from './../todolist.service';
 import { Component, OnInit, ChangeDetectionStrategy, IterableDiffers } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 
 
@@ -26,28 +27,42 @@ export class TodoListComponent implements OnInit {
   readonly filterCompleted : fctfilter = (item) => item.isDone
 
   private fc = new BehaviorSubject<fctfilter>(this.filterAll);
-  readonly tdlobs :Observable<TodoListPlus>;
+  tdlobs !:Observable<TodoListPlus>;
 
-  constructor(private tds : TodolistService) {
-    this.tdlobs  = combineLatest([tds.observable,this.fc]).pipe(
-      map(([L,f]) => ({
-        ...L,
-        remaining : L.items.reduce((nb,item) => item.isDone ? nb : nb+1,0), // remaining c pour calculer le nb de todo restant à faire
-        filter : f,//
-        displayedItems : L.items.filter(f),// displayedItems va filtrer les items avec le filter f
-
-      })),
-      map( inter => ({
-        ...inter,
-        allDone: inter.remaining === 0// dans le cas tout est coché (remainign ===0)true
-      }))
+  obs !: Observable<TodoList>
+  constructor(private tds : TodolistService,public auth:AngularFireAuth) {
+    this.auth.onAuthStateChanged(
+      (user) => {
+        console.log(user?.uid);
+        if(user){
+            this.obs = this.tds.items; 
+            this.tdlobs  = combineLatest([this.tds.obsItems,this.fc]).pipe(
+              map(([L,f]) => ({
+                ...L,
+                remaining : L.items.reduce((nb,item) => item.isDone ? nb : nb+1,0), // remaining c pour calculer le nb de todo restant à faire
+                filter : f,//
+                displayedItems : L.items.filter(f),// displayedItems va filtrer les items avec le filter f
+        
+              })),
+              map( inter => ({
+                ...inter,
+                allDone: inter.remaining === 0// dans le cas tout est coché (remainign ===0)true
+              }))
+            )  
+        }
+      }
     )
+    
   }
   ngOnInit(): void {
   }
 
+  get Obs(){
+    return this.obs;
+  }
+
   get ObsTdl(): Observable<TodoList>{
-    return this.tds.observable;
+    return this.tds.obsItems;
   }
 
 ajouter(s:string): void {
@@ -72,6 +87,11 @@ setfilter(f :fctfilter){
 }
 
 
+deleteAll(items : readonly TodoItem[]){
+  let itemSup = items.filter(x => x.isDone)
+  this.tds.delete(...itemSup)
+  
+}
 
 }
 

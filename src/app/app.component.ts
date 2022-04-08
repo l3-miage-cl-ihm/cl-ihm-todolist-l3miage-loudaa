@@ -9,14 +9,10 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent {
   title = 'l3m-tpX-todolist-angular-y2022';
-
-
-  readonly obsList : Observable<TodoList>;
    constructor(private todoListeService: TodolistService ){
-    this.obsList = todoListeService.observable;
    }
 
-
+   
 
 
   create(tache:string){

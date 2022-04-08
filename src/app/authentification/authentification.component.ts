@@ -20,10 +20,6 @@ export class AuthentificationComponent implements OnInit {
     this.auth.signOut();
   }
 
-
-
-
-
   ngOnInit(): void {
   }
 
